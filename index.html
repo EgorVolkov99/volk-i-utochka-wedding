@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Свадьба Егора и Кристины</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- ТЕМЫ И ПЕРЕМЕННЫЕ --- */
+    :root {
+      --bg-color: #121212;
+      --card-bg: rgba(30, 30, 30, 0.4);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --text-color: #f5f5f7;
+      --text-light: #a1a1a6;
+      --accent-gold: #d4af37;
+      --accent-gradient: linear-gradient(135deg, #f5f5f7 0%, #d4af37 100%);
+      --font-title: 'Cormorant Garamond', serif;
+      --font-body: 'Montserrat', sans-serif;
+    }
+
+    body.light-theme {
+      --bg-color: #f4f0ec;
+      --card-bg: rgba(255, 255, 255, 0.5);
+      --glass-border: rgba(0, 0, 0, 0.05);
+      --text-color: #1d1d1f;
+      --text-light: #6e6e73;
+      --accent-gold: #b8860b;
+      --accent-gradient: linear-gradient(135deg, #1d1d1f 0%, #b8860b 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background-color: var(--bg-color); color: var(--text-color);
+      font-family: var(--font-body); font-weight: 300; line-height: 1.6;
+      overflow-x: hidden; transition: background-color 0.8s ease, color 0.8s ease;
+    }
+
+    a { text-decoration: none !important; }
+
+    /* --- СТАРТОВЫЙ ЭКРАН (ЗАГЛУШКА) --- */
+    #startScreen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: var(--bg-color); z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: opacity 0.8s ease, visibility 0.8s;
+    }
+    .start-content {
+      font-family: var(--font-title); font-size: 4.5rem; color: var(--accent-gold);
+      animation: pulse 1.5s infinite alternate; margin-top: auto; margin-bottom: auto;
+    }
+    .start-hint {
+      font-family: var(--font-body); font-size: 0.85rem; color: var(--text-light);
+      margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; text-align: center;
+      animation: pulse 2s infinite alternate; padding: 0 20px;
+    }
+
+    /* --- АНИМИРОВАННЫЙ ФОН (3D СЕРДЕЧКИ) --- */
+    .bg-animation {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -2; overflow: hidden; background: var(--bg-color);
+      transition: background-color 0.8s ease;
+    }
+    
+    .heart-3d {
+      position: absolute; opacity: 0.6;
+      background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="g" cx="30%" cy="30%" r="70%"><stop offset="0%" stop-color="%23d4af37" stop-opacity="0.8"/><stop offset="100%" stop-color="%238a6a1c" stop-opacity="0.1"/></radialGradient><filter id="f" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="2" dy="5" stdDeviation="4" flood-opacity="0.3"/></filter></defs><path d="M50,85 C20,60 10,40 10,25 C10,12 22,5 35,5 C43,5 48,10 50,15 C52,10 57,5 65,5 C78,5 90,12 90,25 C90,40 80,60 50,85 Z" fill="url(%23g)" filter="url(%23f)"/></svg>');
+      background-size: contain; background-repeat: no-repeat;
+      animation: floatHeart 25s infinite ease-in-out alternate;
+    }
+
+    body.light-theme .heart-3d { opacity: 0.4; }
+
+    .h1 { width: 15vw; height: 15vw; top: 10%; left: 10%; animation-duration: 22s; }
+    .h2 { width: 25vw; height: 25vw; top: 60%; left: 70%; animation-duration: 28s; animation-delay: -5s; }
+    .h3 { width: 10vw; height: 10vw; top: 80%; left: 15%; animation-duration: 18s; animation-delay: -10s; }
+    .h4 { width: 30vw; height: 30vw; top: 10%; left: 60%; animation-duration: 35s; opacity: 0.3; }
+    .h5 { width: 10vw; height: 10vw; top: 40%; left: 10%; animation-duration: 20s; opacity: 0.6;  animation-delay: -7s; }
+    .h6 { width: 20vw; height: 20vw; top: 60%; left: 30%; animation-duration: 15s; opacity: 0.3;  animation-delay: -22s; }
+
+    @keyframes floatHeart {
+      0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+      50% { transform: translate(10vw, -10vh) scale(1.2) rotate(10deg); }
+      100% { transform: translate(-5vw, 15vh) scale(0.8) rotate(-10deg); }
+    }
+    @keyframes pulse { 0% { opacity: 0.6; transform: scale(0.98); } 100% { opacity: 1; transform: scale(1.02); } }
+
+    /* --- КОНТРОЛЛЕРЫ (ЗВУК И ТЕМА) --- */
+    .top-controls {
+      position: fixed; top: 20px; right: 20px; z-index: 100;
+      display: flex; gap: 12px;
+    }
+    .glass-btn {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--card-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border); color: var(--text-color);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .glass-btn:hover { transform: scale(1.1); background: var(--accent-gold); color: #000; }
+
+    #scrollTopBtn {
+      position: fixed; bottom: 30px; right: 20px; z-index: 99;
+      opacity: 0; pointer-events: none; transform: translateY(20px);
+    }
+    #scrollTopBtn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+    /* --- БАЗОВЫЕ КОНТЕЙНЕРЫ --- */
+    .app-container { max-width: 1000px; margin: 0 auto; padding-bottom: 10px; position: relative; }
+    .glass-card {
+      background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: 30px;
+      padding: 40px 30px; margin: 40px 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center;
+    }
+
+    /* --- ТИПОГРАФИКА --- */
+    h1, h2, h3 { font-family: var(--font-title); font-weight: 600; text-align: center; }
+    .gradient-text { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    h2 { font-size: clamp(2.2rem, 6vw, 3rem); margin-bottom: 25px; letter-spacing: 0.02em; }
+    p { font-size: 1.05rem; color: var(--text-light); text-align: center; margin-bottom: 25px; line-height: 1.7; }
+
+    /* --- HERO СЕКЦИЯ (Фото) --- */
+    .hero-section {
+      position: relative; width: 100%; height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 60px 20px 40px;
+    }
+    .hero-image-wrapper {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      height: 100vh; display: inline-block; z-index: -1;
+    }
+    .hero-image {
+      height: 100vh; width: auto; max-width: 100vw; display: block;
+      object-fit: contain; object-position: center;
+    }
+    .hero-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.8) 100%);
+      transition: opacity 1.2s ease;
+    }
+    .hero-title {
+      position: relative; z-index: 1; text-align: center; margin-top: 30vh;
+    }
+    .hero-title h1 { font-size: clamp(3rem, 10vw, 5rem); color: #fff; line-height: 1.1; margin-bottom: 10px; }
+    .hero-title p { color: rgba(255,255,255,0.9); font-size: 1.3rem; letter-spacing: 3px; text-transform: uppercase; }
+    
+    .btn-primary {
+      display: inline-block; width: 100%; padding: 20px;
+      background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      border: 1px solid var(--accent-gold); border-radius: 20px;
+      color: var(--text-color); font-family: var(--font-body); font-size: 1.1rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 1px; text-align: center; cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; z-index: 1;
+    }
+    .btn-primary:hover { background: var(--accent-gold); color: #000; transform: translateY(-3px); }
+
+    /* --- ВИДЕО СЕКЦИЯ --- */
+    .video-section {
+      width: 100%; padding: 0; display: flex; flex-direction: column; align-items: center;
+    }
+    .video-container {
+      width: 100%; height: 100vh; border-radius: 0; overflow: hidden; position: relative;
+      border: none; cursor: pointer; background: #000;
+    }
+    .video-container video { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 0; }
+    .play-icon {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 80px; height: 80px; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; color: #fff; transition: opacity 0.3s ease; pointer-events: none;
+    }
+    .video-container.playing .play-icon { opacity: 0; }
+
+    .video-end-overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); z-index: 4;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
+    }
+    .video-end-overlay.active { opacity: 1; pointer-events: auto; }
+
+    /* --- АНИМАЦИЯ ПОЯВЛЕНИЯ (ОБРАТНАЯ КАПЛЯ) --- */
+    .glass-card.fade-up {
+      opacity: 0;
+      transform: translateY(120px);
+      margin-left: 0; margin-right: 0;
+      border-radius: 0 0 40px 40px;
+      transition: all 0.9s cubic-bezier(0.34, 1.3, 0.64, 1);
+    }
+    .glass-card.fade-up.active {
+      opacity: 1; transform: translateY(0);
+      margin-left: 20px; margin-right: 20px;
+      border-radius: 30px;
+    }
+    .glass-card.fade-up > * {
+      opacity: 0; transform: translateY(15px); transition: all 0.6s ease-out;
+    }
+    .glass-card.fade-up.active > * {
+      opacity: 1; transform: translateY(0); transition-delay: 0.3s;
+    }
+
+    .fade-up:not(.glass-card) {
+      opacity: 0; transform: translateY(50px); transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .fade-up:not(.glass-card).active { opacity: 1; transform: translateY(0); }
+
+    /* --- ТАЙМЕР --- */
+    .timer-container { display: flex; justify-content: center; gap: 15px; margin: 30px 0; }
+    .timer-box { text-align: center; }
+    .timer-value { font-family: var(--font-title); font-size: 2.8rem; color: var(--accent-gold); line-height: 1; }
+    .timer-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-light); margin-top: 5px; }
+
+    /* --- ТАЙМЛАЙН РАСПИСАНИЯ --- */
+    .timeline { position: relative; padding: 20px 0 20px 25px; margin: 20px 0; text-align: left; }
+    .timeline::before {
+      content: ''; position: absolute; top: 0; left: 0; width: 2px; height: 100%;
+      background: var(--glass-border);
+    }
+    .timeline-progress {
+      position: absolute; top: 0; left: 0; width: 2px; height: 0%;
+      background: var(--accent-gold); transition: height 0.4s ease-out;
+    }
+    .timeline-day { font-family: var(--font-title); font-size: 1.8rem; color: var(--accent-gold); margin: 50px 10px 30px 0px; }
+    .timeline-item { position: relative; margin-bottom: 50px; opacity: 0; transform: translateX(40px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .timeline-item.active { opacity: 1; transform: translateX(0); }
+    .timeline-item::before {
+      content: ''; position: absolute; left: -32px; top: 8px; width: 16px; height: 16px;
+      border-radius: 50%; background: var(--bg-color); border: 2px solid var(--glass-border);
+      transition: all 0.6s ease;
+    }
+    .timeline-item.active::before { background: var(--accent-gold); border-color: var(--accent-gold); box-shadow: 0 0 15px var(--accent-gold); }
+    .timeline-time { font-family: var(--font-title); font-size: 1.8rem; font-weight: 600; color: var(--text-color); margin-bottom: 8px; line-height: 1; }
+    .timeline-title { font-weight: 600; font-size: 1.2rem; color: var(--accent-gold); margin-bottom: 10px; }
+
+    /* --- СЛАЙДЕРЫ (КАРУСЕЛИ) И ИСПРАВЛЕНИЕ КАРТ НА МОБИЛЬНЫХ --- */
+    .slider-wrapper { position: relative; width: 100%; margin: 30px 0; }
+    .slider-track {
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch; border-radius: 24px;
+      border: 1px solid var(--glass-border);
+    }
+    .slider-track::-webkit-scrollbar { display: none; }
+    .slider-item {
+      scroll-snap-align: center; flex: 0 0 100%;
+      max-width: 100%; min-width: 0; position: relative;
+    }
+    .slider-item img,
+    .slider-item iframe {
+      width: 100% !important; height: 400px !important;
+      object-fit: cover; display: block; border-radius: 24px; border: none;
+    }
+    
+    .slider-caption {
+      margin-top: 15px; font-size: 1rem; color: var(--accent-gold); font-weight: 500;
+      min-height: 24px; transition: opacity 0.3s ease; text-align: center;
+    }
+    .slider-nav { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
+    .slider-dot {
+      width: 10px; height: 10px; border-radius: 5px;
+      background: var(--text-light); opacity: 0.4;
+      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer;
+    }
+    .slider-dot.active { width: 35px; background: var(--accent-gold); opacity: 1; }
+
+    /* --- КАРТЫ --- */
+    .map-widget { width: 100%; height: 300px; border-radius: 24px; overflow: hidden; margin-top: 25px; border: 1px solid var(--glass-border); }
+    .map-widget iframe { width: 100%; height: 100%; border: none; border-radius: 24px; }
+
+    /* --- ФОРМА И ЭЛЕМЕНТЫ УПРАВЛЕНИЯ --- */
+    .form-group { margin-bottom: 35px; text-align: left; }
+    .form-label { display: block; font-size: 1.05rem; font-weight: 600; margin-bottom: 15px; color: var(--text-color); }
+    .form-input {
+      width: 100%; padding: 18px 20px;
+      border: 1px solid var(--glass-border); border-radius: 20px;
+      font-family: var(--font-body); font-size: 1rem;
+      background: rgba(0,0,0,0.15); color: var(--text-color);
+      outline: none; transition: all 0.3s;
+    }
+    body.light-theme .form-input { background: rgba(255,255,255,0.6); }
+    .form-input:focus { border-color: var(--accent-gold); background: transparent; }
+    
+    .checkbox-group { display: flex; flex-direction: column; gap: 15px; }
+    .checkbox-label { display: flex; align-items: center; gap: 15px; font-size: 1rem; color: var(--text-light); cursor: pointer; transition: color 0.3s;}
+    .checkbox-label:hover { color: var(--text-color); }
+    .checkbox-label input { accent-color: var(--accent-gold); width: 22px; height: 22px; flex-shrink: 0; cursor: pointer; }
+
+    details { background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 16px; margin-bottom: 15px; padding: 20px; transition: all 0.3s ease; }
+    details[open] { border-color: var(--accent-gold); }
+    summary { font-weight: 500; font-size: 1.05rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; color: var(--text-color); }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: '+'; font-size: 1.5rem; color: var(--accent-gold); transition: transform 0.3s; }
+    details[open] summary::after { transform: rotate(45deg); }
+    .faq-content { margin-top: 15px; font-size: 0.95rem; color: var(--text-light); text-align: left; line-height: 1.6; }
+
+    .img-fluid { width: 100%; border-radius: 24px; margin-top: 20px; border: 1px solid var(--glass-border); }
+  </style>
+</head>
+<body>
+
+  <!-- СТАРТОВЫЙ ЭКРАН (ЗАГЛУШКА) -->
+  <div id="startScreen" onclick="startExperience()">
+    <div class="start-content">Е & К</div>
+    <div class="start-hint">Нажмите на экран,<br>чтобы включить звук и продолжить</div>
+  </div>
+
+  <!-- АУДИО ТРЕКИ (Разбиты по зонам) -->
+  <audio id="audio-hero" src="./Музыка/Smeshariki_1.mp3" loop preload="auto"></audio>
+  <audio id="audio-schedule" src="./Музыка/Smeshariki_2.mp3" loop preload="auto"></audio>
+  <audio id="audio-loc-1" src="./Музыка/Smeshariki_3.mp3" preload="auto"></audio>
+  <audio id="audio-loc-2" src="./Музыка/Smeshariki_4.mp3" preload="auto"></audio>
+  <audio id="audio-loc-3" src="./Музыка/Smeshariki_5.mp3" preload="auto"></audio>
+  <audio id="audio-rsvp" src="./Музыка/Smeshariki_6.mp3" loop preload="auto"></audio>
+
+  <!-- Анимированный 3D фон -->
+  <div class="bg-animation" id="bgAnimation">
+    <div class="heart-3d h1"></div>
+    <div class="heart-3d h2"></div>
+    <div class="heart-3d h3"></div>
+    <div class="heart-3d h4"></div>
+    <div class="heart-3d h5"></div>
+    <div class="heart-3d h6"></div>
+  </div>
+
+  <!-- Плавающие кнопки (Тема, Звук, Наверх) -->
+  <div class="top-controls">
+    <button class="glass-btn" id="audioToggle" onclick="toggleGlobalAudio()" title="Звук">🔈</button>
+    <button class="glass-btn" onclick="toggleTheme()" title="Сменить тему">☀️</button>
+  </div>
+  <button class="glass-btn" id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Наверх">↑</button>
+
+  <!-- ЗОНА 1: HERO -->
+  <section class="hero-section" id="zone-hero">
+    <div class="hero-image-wrapper">
+      <img src="./Фото/Мы_маленькие.png" alt="Мы" class="hero-image">
+      <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="hero-title">
+      <h1>Егор & Кристина</h1>
+      <p>17.09.2026</p>
+    </div>
+
+    <div style="width: 100%; max-width: 680px; padding: 0 20px; z-index: 2;">
+      <button class="btn-primary" onclick="scrollToVideoAndPlay()">Мы прямо как в той песне</button>
+    </div>
+  </section>
+
+  <!-- ВИДЕО СЕКЦИЯ -->
+  <section class="app-container" id="videoSection">
+    <div class="video-container" id="videoContainer" onclick="toggleVideo()">
+      <video id="storyVideo" playsinline preload="metadata">
+        <source src="./Фото/Мы.mp4" type="video/mp4">
+      </video>
+
+      <div class="play-icon" id="playIcon">▶</div>
+
+      <!-- Оверлей после видео -->
+      <div class="video-end-overlay" id="videoEndOverlay">
+        <button class="btn-primary" onclick="replayVideo()" style="width: 80%; max-width: 350px;">Ой, а включите еще раз!<br><span style="font-size: 0.7rem; font-weight:300; letter-spacing: 0;">Мне понравилось</span></button>
+        <button class="btn-primary" onclick="continueScroll()" style="background: var(--accent-gold); color:#000; border:none; width: 80%; max-width: 350px;">А что же дальше?</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЗОНА 2: РАСПИСАНИЕ -->
+  <section class="app-container" id="zone-schedule">
+    <div class="glass-card fade-up">
+        <h2 class="gradient-text" style="margin-top: 10px;">Вступление</h2>
+        <p>Уже совсем скоро два прикольных человечка официально станут одной прикольной семьёй.</p>
+
+        <div class="timer-container" id="timer">
+          <div class="timer-box"><div class="timer-value" id="days">00</div><div class="timer-label">Дней</div></div>
+          <div class="timer-box"><div class="timer-value" id="hours">00</div><div class="timer-label">Часов</div></div>
+          <div class="timer-box"><div class="timer-value" id="minutes">00</div><div class="timer-label">Минут</div></div>
+          <div class="timer-box"><div class="timer-value" id="seconds">00</div><div class="timer-label">Секунд</div></div>
+        </div>
+
+        <p>Приглашаем Вас разделить с нами радость этого незабываемого момента!</p>
+    </div>
+
+    <div class="glass-card fade-up">
+      <h2 class="gradient-text" style="margin-top: 10px;">Свадебное расписание</h2>
+
+      <div class="timeline" id="timeline">
+        <div class="timeline-progress" id="timelineProgress"></div>
+
+        <div class="timeline-day">День 1 (17.09) — ЗАГС</div>
+        <div class="timeline-item tl-anim">
+          <div class="timeline-time">22:00</div>
+          <div class="timeline-title">Сбор гостей</div>
+          <p class="timeline-desc">Собираемся у ЗАГСа, знакомимся, фотографируемся и говорим друг другу, какие мы все красивые.</p>
+        </div>
+        <div class="timeline-item tl-anim">
+          <div class="timeline-time">23:00</div>
+          <div class="timeline-title">Церемония бракосочетания</div>
+          <p class="timeline-desc">Наша регистрация пройдет в ажурных залах аутентичного великокняжеского дворца — чтобы вы ну тоооочно не зря приехали!</p>
+        </div>
+        <div class="timeline-item tl-anim">
+          <div class="timeline-time">23:30</div>
+          <div class="timeline-title">Гулянка</div>
+          <p class="timeline-desc">Если ваши глаза еще не будут закрываться, то мы продолжим наш первый день легкой прогулкой с фото и шампанским.</p>
+        </div>
+
+        <div class="timeline-day" style="margin-top: 60px;">День 2 (18.09) — Коттедж</div>
+        <div class="timeline-item tl-anim">
+          <div class="timeline-time">17:00</div>
+          <div class="timeline-title">Сбор гостей во второй день</div>
+          <p class="timeline-desc">Начинаем второй день. Собираемся в лесном коттедже и болтаем о высоком под бокал вина и фуршет.</p>
+        </div>
+        <div class="timeline-item tl-anim">
+          <div class="timeline-time">17:30</div>
+          <div class="timeline-title">Начало банкета</div>
+          <p class="timeline-desc">Здесь начинается "полноценная" свадьба с ведущим, конкурсами, банкетом и приятными словами. Будет вкусно, весело и романтично!</p>
+        </div>
+        <div class="timeline-item tl-anim">
+          <div class="timeline-time">22:00</div>
+          <div class="timeline-title">Афтерпати</div>
+          <p class="timeline-desc">После окончания церемонии с ведущим, в нашем распоряжении трехэтажный коттедж с крытым бассейном, сауной и озером в двух шагах. Можно всю ночь танцевать, вести светские беседы в приятной компании или просто пойти спать пораньше. Не волнуйтесь, перины хватит всем!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЗОНА 3: ЛОКАЦИИ, ПЛЕЙЛИСТ И ПОДАРКИ (Плейлист аудио) -->
+  <section class="app-container" id="zone-locations">
+
+    <!-- ЗАГС -->
+    <div class="glass-card fade-up">
+      <h2 class="gradient-text" style="margin-top: 10px;">ЗАГС</h2>
+      <p>Это историческое здание в стиле неоренессанса, построенное в конце XIX века. До революции особняк принадлежал Великому князю Андрею Владимировичу — внуку Александра II. Позже здесь размещались советские учреждения, а с 1959 года особняк стал Дворцом бракосочетания № 1. Давайте же проведём свадьбу в атмосфере подлинной петербургской элегантности!</p>
+      <p>Английская набережная, 28 (Санкт-Петербург)</p>
+
+      <div class="slider-wrapper" id="sliderZags">
+        <div class="slider-track" onscroll="updateSliderDots('sliderZags')">
+          <div class="slider-item" data-caption="Так дворец выглядит снаружи"><img src="./Фото/ЗАГС_1.jpg" alt="ЗАГС 1"></div>
+          <div class="slider-item" data-caption="Это его парадная лестница - тут фотографироваться обязательно"><img src="./Фото/ЗАГС_2.jpg" alt="ЗАГС 2"></div>
+          <div class="slider-item" data-caption="В этом зале нас распишут, а вы - похлопаете"><img src="./Фото/ЗАГС_3.jpg" alt="ЗАГС 3"></div>
+          <div class="slider-item" data-caption="В этом и других залах вы будете ожидать начала церемонии и общаться"><img src="./Фото/ЗАГС_4.jpg" alt="ЗАГС 4"></div>
+        </div>
+        <div class="slider-caption" id="caption-sliderZags">Так дворец выглядит снаружи!</div>
+        <div class="slider-nav" id="nav-sliderZags">
+          <!-- Точки генерируются JS -->
+        </div>
+      </div>
+
+      <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Свадьба+Егора+и+Кристины+(ЗАГС)&dates=20260917T190000Z/20260917T210000Z&details=Сбор+гостей+у+ЗАГСа&location=Английская+набережная,+28,+Санкт-Петербург" target="_blank" class="btn-primary" style="margin-top: 20px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold);">📅 Добавить в календарь</a>
+      <div class="map-widget">
+        <iframe src="https://yandex.ru/map-widget/v1/?ll=30.293943%2C59.933919&z=16&pt=30.293943%2C59.933919"></iframe>
+      </div>
+    </div>
+
+    <!-- Коттедж -->
+    <div class="glass-card fade-up">
+      <h2 class="gradient-text" style="margin-top: 10px;">Коттедж</h2>
+      <p>Уютный зеленый коттедж, где всем будет красиво и хорошо.</p>
+      <p>Ленинградское шоссе, 81 (пос. Юкки)</p>
+
+      <div class="slider-wrapper" id="sliderCottage">
+        <div class="slider-track" onscroll="updateSliderDots('sliderCottage')">
+          <div class="slider-item" data-caption="Такой домик приютит наш скромный праздник"><img src="./Фото/Коттедж_1.png" alt="Коттедж 1"></div>
+          <div class="slider-item" data-caption="Да, будет действительно зелено!"><iframe src="https://www.google.com/maps/embed?pb=!4v1784736537334!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJRDYwYVhzVmc.!2m2!1d60.11149486151693!2d30.29794771342747!3f280.2343177598503!4f-39.50323370443064!5f0.7324599092191462" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+          <div class="slider-item" data-caption="И будет такой бассейн"><img src="./Фото/Коттедж_2.jpg" alt="Коттедж 2"></div>
+          <div class="slider-item" data-caption="А в этой и многих других комнатах вы сможете переночевать"><img src="./Фото/Коттедж_3.jpg" alt="Коттедж 3"></div>
+        </div>
+        <div class="slider-caption" id="caption-sliderCottage">Такой домик приютит наш скромный праздник</div>
+        <div class="slider-nav" id="nav-sliderCottage"></div>
+      </div>
+
+      <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=Свадьба+Егора+и+Кристины+(Банкет)&dates=20260918T130000Z/20260919T090000Z&details=Празднуем+второй+день!&location=Ленинградское+шоссе,+81,+Юкки" target="_blank" class="btn-primary" style="margin-top: 20px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold);">📅 Добавить в календарь</a>
+      <div class="map-widget">
+        <iframe src="https://yandex.ru/map-widget/v1/?ll=30.299231%2C60.110437&z=16&pt=30.299231%2C60.110437"></iframe>
+      </div>
+    </div>
+
+    <!-- Плейлист -->
+    <div class="glass-card fade-up">
+      <h2 class="gradient-text" style="margin-top: 10px;">Наш плейлист</h2>
+      <p>Мы создали совместный плейлист в Яндекс.Музыке. Переходите по ссылке и добавляйте треки, под которые вы точно пойдете танцевать!</p>
+      <a href="https://music.yandex.ru/playlists/a36f5e54-2b7e-5d46-bd9c-12cae7bbea69?ref_id=3282127E-A8E5-4D3F-9132-6FDA1D014094&utm_medium=share_link_tg&utm_source=mobile_ios" target="_blank" class="btn-primary" style="margin-bottom: 40px; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold);">🎵 Предложить музыку</a>
+    </div>
+
+    <!-- Подарки -->
+    <div class="glass-card fade-up">
+      <h2 class="gradient-text" style="margin-top: 60px;">Пожелания</h2>
+      <p>Ваше присутствие в день нашей свадьбы — самый значимый подарок для нас!</p>
+      <p>Мы понимаем, что дарить цветы и бытовые приборы — это традиция, но мы не сможем насладиться их красотой в полной мере(</p>
+      <p>Поэтому подарки отнюдь не обязательны, но если все-таки, то мы будем рады старым-добрым грязным зеленым/красным/синим/иным бумажкам!</p>
+      <img src="./Фото/6c9692_20260603131214.png" alt="Подарки" class="img-fluid">
+    </div>
+  </section>
+
+  <!-- 7. FAQ (Аккордеон) -->
+  <section class="app-container">
+    <h2 class="gradient-text">Частые вопросы</h2>
+    <details>
+      <summary>Будет ли дресс-код?</summary>
+      <div class="faq-content">На нашем скромном мероприятии нет строгой цветовой палитры или конкретного стиля. Разве что только белое платье забронировано невестой) Вас лишь только настоятельно просим быть неотразимыми и торжественными! </div>
+    </details>
+    <details>
+      <summary>Можно ли остаться с ночевкой?</summary>
+      <div class="faq-content">Да, коттедж огромный! Места хватит на всех и Вам не стоит переживать о поздней дороге домой.</div>
+    </details>
+    <details>
+      <summary>А чем вообще можно будет позаниматься в коттедже?</summary>
+      <div class="faq-content">Ох, ну тут будет где разгуляться! Во-первых, можно буквально погулять по лесочку и до озера (до него всего 100 метров). Во-вторых, будет бильярд, тёплый бассейн, баня, зоны для просмотра фильмов, для игры в покер/настолки, для кальяна. Да на территории есть даже мини-зоопарк с павлином!</div>
+    </details>
+    <details>
+      <summary>Можно ли принести свой фотоаппарат, свою настолку или что-то, что может быть полезным?</summary>
+      <div class="faq-content">Конечно! Все, что может сделать наш общий праздник лучше - категорически приветствуется</div>
+    </details>
+    <details>
+      <summary>Есть ли что-то нежелательное на мероприятии?</summary>
+      <div class="faq-content">Будем благодарны, если вы воздержитесь от излишнего алкоголя, вульгарностей, пожелания детишек и прочего, смущающего молодожёнов.</div>
+    </details>
+  </section>
+
+  <!-- ЗОНА 4: ВОПРОСЫ (RSVP) -->
+  <section class="app-container" id="zone-rsvp">
+    <form class="glass-card fade-up" id="rsvpForm" onsubmit="sendToTelegram(event)">
+      <h2 class="gradient-text" style="margin-top: 10px;">Анкета гостя</h2>
+      <p>Пожалуйста, ответьте на вопросы, которые мы для вас подготовили</p>
+
+      <div class="form-group" style="margin-top: 40px;">
+        <label class="form-label">Имя и Фамилия:</label>
+        <input type="text" class="form-input" id="guestName" placeholder="Например: Иван Иванов" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Планируете ли вы быть?</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label"><input type="radio" name="attendance" value="Да, буду!" checked> С радостью приду!</label>
+          <label class="checkbox-label"><input type="radio" name="attendance" value="Нет, не смогу"> К сожалению, не получится</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Особые предпочтения по еде:</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label"><input type="checkbox" name="food" value="Нет"> Нет</label>
+          <label class="checkbox-label"><input type="checkbox" name="food" value="Не ем мясо"> Не ем мясо</label>
+          <label class="checkbox-label"><input type="checkbox" name="food" value="Не ем рыбу"> Не ем рыбу</label>
+          <label class="checkbox-label"><input type="checkbox" name="food" value="Вегетарианец"> Вегетарианец</label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="foodOtherCb" onchange="toggleInput('foodOtherCb', 'foodOtherInput')">
+            Другое (аллергия/напишу лично)
+          </label>
+          <input type="text" id="foodOtherInput" class="form-input" style="display:none; margin-top: 10px;" placeholder="Уточните здесь...">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Какой алкоголь предпочитаете?</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label"><input type="checkbox" name="drinks" value="Красное вино"> Красное вино</label>
+          <label class="checkbox-label"><input type="checkbox" name="drinks" value="Белое вино"> Белое вино</label>
+          <label class="checkbox-label"><input type="checkbox" name="drinks" value="Шампанское"> Шампанское</label>
+          <label class="checkbox-label"><input type="checkbox" name="drinks" value="Виски/коньяк"> Виски/коньяк</label>
+          <label class="checkbox-label"><input type="checkbox" name="drinks" value="Водка"> Водка</label>
+          <label class="checkbox-label"><input type="checkbox" name="drinks" value="Не буду пить алкоголь"> Не буду пить алкоголь</label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="drinksOtherCb" onchange="toggleInput('drinksOtherCb', 'drinksOtherInput')">
+            Другое
+          </label>
+          <input type="text" id="drinksOtherInput" class="form-input" style="display:none; margin-top: 10px;" placeholder="Что будете пить?">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Сможете ли вы помочь подвести кого-то до коттеджа?</label>
+        <div class="checkbox-group">
+          <label class="checkbox-label"><input type="radio" name="transfer" value="Есть машина, но не смогу"> Есть машина, но не смогу</label>
+          <label class="checkbox-label"><input type="radio" name="transfer" value="У меня есть машина - готов буду подвести кого-нибудь"> У меня есть машина - готов буду подвести кого-нибудь</label>
+          <label class="checkbox-label"><input type="radio" name="transfer" value="Могу взять каршеринг и скооперироваться с кем-нибудь"> Могу взять каршеринг и скооперироваться с кем-нибудь</label>
+          <label class="checkbox-label"><input type="radio" name="transfer" value="Доберусь как-нибудь один"> Доберусь как-нибудь один</label>
+          <label class="checkbox-label"><input type="radio" name="transfer" value="Хотел бы, чтобы мне помогли доехать"> Хотел бы, чтобы мне помогли доехать</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary" id="submitBtn">Отправить ответы</button>
+      <p id="formStatus" style="display:none; margin-top: 20px; font-weight: 500;"></p>
+    </form>
+
+    <!-- Копирайт -->
+    <div class="glass-card fade-up">
+      <h1 class="gradient-text" style="margin-top: 10px;">© Навайбкодил Егор под чутким присмотром спящей Кристины, 2026</h1>
+    </div>
+
+  </section>
+
+
+
+  <script>
+    /* --- СТАРТОВЫЙ ЭКРАН (ЗАПУСК АУДИО И ИНТЕРАКТИВА) --- */
+    function startExperience() {
+      const startScreen = document.getElementById('startScreen');
+      startScreen.style.opacity = '0';
+      setTimeout(() => startScreen.style.visibility = 'hidden', 800);
+      
+      // ВАЖНО: Разблокируем все аудио-треки для мобильных браузеров (iOS/Android)
+      // Без этого действия внутри клика браузер заблокирует воспроизведение при скролле!
+      document.querySelectorAll('audio').forEach(audio => {
+        audio.volume = 0;
+        let playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+          }).catch(error => {
+            console.log("Auto-unlock failed for:", audio.id);
+          });
+        }
+      });
+
+      if (!globalAudioEnabled) {
+        setTimeout(() => {
+          toggleGlobalAudio();
+        }, 150);
+      }
+    }
+
+    /* --- УПРАВЛЕНИЕ ТЕМОЙ И АНИМАЦИЕЙ ФОНА --- */
+    let isDark = true;
+    function toggleTheme() {
+      isDark = !isDark;
+      if (isDark) document.body.classList.remove('light-theme');
+      else document.body.classList.add('light-theme');
+    }
+
+    window.addEventListener('scroll', () => {
+      const hearts = document.querySelectorAll('.heart-3d');
+      const scrolled = window.scrollY;
+      hearts.forEach((heart, index) => {
+        const speed = (index + 1) * 0.05;
+        heart.style.transform = `translateY(${scrolled * speed}px)`;
+      });
+    });
+
+    /* --- УПРАВЛЕНИЕ АУДИО (СЛОЖНЫЙ КРОССФЕЙД И ЗОНЫ) --- */
+    let globalAudioEnabled = false;
+    let currentAudioTrack = null;
+    let fadeIntervals = [];
+
+    const locPlaylist = ['audio-loc-1', 'audio-loc-2', 'audio-loc-3'];
+    let currentLocIndex = 0;
+
+    locPlaylist.forEach((id, index) => {
+      document.getElementById(id).addEventListener('ended', () => {
+        currentLocIndex = (index + 1) % locPlaylist.length;
+        crossfadeTo(locPlaylist[currentLocIndex]);
+      });
+    });
+
+    function toggleGlobalAudio() {
+      globalAudioEnabled = !globalAudioEnabled;
+      const audioBtn = document.getElementById('audioToggle');
+      if (globalAudioEnabled) {
+        audioBtn.textContent = '🔊';
+        checkAudioZone(); 
+      } else {
+        audioBtn.textContent = '🔈';
+        if (currentAudioTrack) {
+          currentAudioTrack.pause();
+          currentAudioTrack = null;
+        }
+      }
+    }
+
+    function crossfadeTo(newTrackId) {
+      if (!globalAudioEnabled) return;
+      
+      const newTrack = document.getElementById(newTrackId);
+      if (!newTrack) return;
+      if (currentAudioTrack && currentAudioTrack.id === newTrackId && !currentAudioTrack.paused) return;
+
+      fadeIntervals.forEach(clearInterval);
+      fadeIntervals = [];
+
+      document.querySelectorAll('audio').forEach(audio => {
+        if (audio.id !== newTrackId && !audio.paused) {
+          let fadeOut = setInterval(() => {
+            if (audio.volume > 0.1) {
+              audio.volume -= 0.1;
+            } else {
+              audio.volume = 0;
+              audio.pause();
+              clearInterval(fadeOut);
+            }
+          }, 100); 
+          fadeIntervals.push(fadeOut);
+        }
+      });
+
+      newTrack.volume = 0;
+      newTrack.play().catch(e => console.log("Play prevented"));
+      let fadeIn = setInterval(() => {
+        if (newTrack.volume < 0.9) {
+          newTrack.volume += 0.1;
+        } else {
+          newTrack.volume = 1;
+          clearInterval(fadeIn);
+        }
+      }, 100);
+      fadeIntervals.push(fadeIn);
+      currentAudioTrack = newTrack;
+    }
+
+    const audioZones = [
+      { id: 'zone-hero', track: 'audio-hero' },
+      { id: 'videoSection', track: 'pause' }, 
+      { id: 'zone-schedule', track: 'audio-schedule' },
+      { id: 'zone-locations', track: 'playlist' },
+      { id: 'zone-rsvp', track: 'audio-rsvp' }
+    ];
+
+    let currentZoneId = 'zone-hero';
+
+    const zoneObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          currentZoneId = entry.target.id;
+          checkAudioZone();
+        }
+      });
+    }, { threshold: 0.3 });
+
+    audioZones.forEach(zone => {
+      const el = document.getElementById(zone.id);
+      if(el) zoneObserver.observe(el);
+    });
+
+    function checkAudioZone() {
+      if (!globalAudioEnabled) return;
+      const video = document.getElementById('storyVideo');
+      if (!video.paused && currentZoneId === 'videoSection') return; 
+
+      const zone = audioZones.find(z => z.id === currentZoneId);
+      if (!zone) return;
+
+      if (zone.track === 'playlist') {
+        crossfadeTo(locPlaylist[currentLocIndex]);
+      } else if (zone.track !== 'pause') {
+        crossfadeTo(zone.track);
+      }
+    }
+
+    /* --- ЛОГИКА ВИДЕО И ПЕРЕХОДОВ --- */
+    const videoContainer = document.getElementById('videoContainer');
+    const storyVideo = document.getElementById('storyVideo');
+    const videoEndOverlay = document.getElementById('videoEndOverlay');
+
+    function scrollToVideoAndPlay() {
+      if (!globalAudioEnabled) {
+        toggleGlobalAudio();
+      }
+      
+      const vSection = document.getElementById('videoSection');
+      vSection.scrollIntoView({ behavior: 'smooth' });
+      
+      setTimeout(() => {
+        if (storyVideo.paused) toggleVideo();
+      }, 500); 
+    }
+
+    function toggleVideo() {
+      if (storyVideo.paused) {
+        storyVideo.play();
+        videoContainer.classList.add('playing');
+        videoEndOverlay.classList.remove('active');
+
+        if (currentAudioTrack) currentAudioTrack.pause();
+      } else {
+        storyVideo.pause();
+        videoContainer.classList.remove('playing');
+        checkAudioZone();
+      }
+    }
+
+    storyVideo.onended = () => {
+      videoEndOverlay.classList.add('active');
+      // Включаем музыку обратно, если она играла до этого
+      if (isAudioPlaying) bgAudio.play();
+    };
+
+    function continueScroll() {
+      toggleVideo()
+      document.getElementById('zone-schedule').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    storyVideo.addEventListener('ended', () => {
+      videoContainer.classList.remove('playing');
+      checkAudioZone(); 
+    });
+
+    /* --- КНОПКА НАВЕРХ --- */
+    const scrollTopBtn = document.getElementById('scrollTopBtn');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > window.innerHeight - 100) {
+        scrollTopBtn.classList.add('visible');
+      } else {
+        scrollTopBtn.classList.remove('visible');
+      }
+    });
+
+    /* --- АНИМАЦИЯ ТАЙМЛАЙНА И FADE-UP --- */
+    const tlItems = document.querySelectorAll('.tl-anim');
+    const tlProgress = document.getElementById('timelineProgress');
+    const timeline = document.getElementById('timeline');
+
+    const appearObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.2, rootMargin: "0px 0px -50px 0px" });
+
+    tlItems.forEach(item => appearObserver.observe(item));
+    document.querySelectorAll('.fade-up').forEach(item => appearObserver.observe(item));
+
+    window.addEventListener('scroll', () => {
+      if(!timeline) return;
+      const rect = timeline.getBoundingClientRect();
+      const winHeight = window.innerHeight;
+      if (rect.top < winHeight / 2 && rect.bottom > 0) {
+        let progress = ((winHeight / 2 - rect.top) / rect.height) * 100;
+        timelineProgress.style.height = `${Math.max(0, Math.min(100, progress))}%`;
+      }
+    });
+
+    /* --- СЛАЙДЕРЫ ФОТО С КАПШЕНАМИ --- */
+    function initSliders() {
+      const sliders = ['sliderZags', 'sliderCottage'];
+      sliders.forEach(id => {
+        const wrapper = document.getElementById(id);
+        const track = wrapper.querySelector('.slider-track');
+        const items = track.querySelectorAll('.slider-item');
+        const nav = wrapper.querySelector('.slider-nav');
+        
+        nav.innerHTML = '';
+        items.forEach((item, index) => {
+          const dot = document.createElement('div');
+          dot.className = `slider-dot ${index === 0 ? 'active' : ''}`;
+          dot.onclick = () => {
+            track.scrollTo({ left: track.clientWidth * index, behavior: 'smooth' });
+          };
+          nav.appendChild(dot);
+        });
+      });
+    }
+
+    function updateSliderDots(sliderId) {
+      const wrapper = document.getElementById(sliderId);
+      const track = wrapper.querySelector('.slider-track');
+      const items = track.querySelectorAll('.slider-item');
+      const dots = wrapper.querySelectorAll('.slider-dot');
+      const captionEl = wrapper.querySelector('.slider-caption');
+      
+      const index = Math.round(track.scrollLeft / track.clientWidth);
+      
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+      
+      if(items[index]) {
+        captionEl.style.opacity = 0;
+        setTimeout(() => {
+          captionEl.textContent = items[index].getAttribute('data-caption') || '';
+          captionEl.style.opacity = 1;
+        }, 200);
+      }
+    }
+
+    initSliders();
+
+    /* --- ТАЙМЕР --- */
+    const targetDate = new Date('2026-09-17T22:00:00').getTime();
+    function updateTimer() {
+      const distance = targetDate - new Date().getTime();
+      if (distance < 0) {
+        document.getElementById('timer').innerHTML = "<div class='timer-value'>Ура! Свадьба состоялась!</div>";
+        return;
+      }
+      document.getElementById('days').textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+      document.getElementById('hours').textContent = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    /* --- ПОКАЗ СКРЫТЫХ ПОЛЕЙ АНКЕТЫ --- */
+    function toggleInput(checkboxId, inputId) {
+      const cb = document.getElementById(checkboxId);
+      const input = document.getElementById(inputId);
+      input.style.display = cb.checked ? 'block' : 'none';
+      if (cb.checked) input.focus();
+      else input.value = '';
+    }
+
+    /* --- ОТПРАВКА В TELEGRAM И СМЕНА КНОПКИ --- */
+    async function sendToTelegram(event) {
+      event.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const status = document.getElementById('formStatus');
+      btn.disabled = true; btn.textContent = 'Отправка...';
+
+      const name = document.getElementById('guestName').value;
+      const attendance = document.querySelector('input[name="attendance"]:checked').value;
+      
+      let foodValues = Array.from(document.querySelectorAll('input[name="food"]:checked')).map(cb => cb.value);
+      if (document.getElementById('foodOtherCb').checked) {
+        foodValues.push(`Другое: ${document.getElementById('foodOtherInput').value}`);
+      }
+      const food = foodValues.join(', ') || 'Не указано';
+                        
+      let drinksValues = Array.from(document.querySelectorAll('input[name="drinks"]:checked')).map(cb => cb.value);
+      if (document.getElementById('drinksOtherCb').checked) {
+        drinksValues.push(`Свой вариант: ${document.getElementById('drinksOtherInput').value}`);
+      }
+      const drinks = drinksValues.join(', ') || 'Не указано';
+
+      const transfer = document.querySelector('input[name="transfer"]:checked').value;
+
+      try {
+        const response = await fetch(
+                "https://twilight-glitter-c48d.egovol98.workers.dev", {
+                  method:"POST",  headers:{"Content-Type":"application/json"},
+                  body:JSON.stringify({
+                    name,
+                    attendance,
+                    food,
+                    drinks,
+                    transfer
+                  })
+                });
+        
+        if (response.ok) {
+          status.style.display = 'block'; 
+          status.style.color = 'var(--text-color)';
+          btn.style.display = 'none';
+
+          if (attendance === "Да, буду!") {
+            status.innerHTML = `Спасибо! Ваши ответы отправлены.<br><br><a href="https://t.me/+5QFYr1wDDsIxOTUy" target="_blank" class="btn-primary" style="margin-top:10px;">Присоединиться к чату гостей в Telegram</a>`;
+          } else {
+            status.innerHTML = `Нам очень жаль! Надеемся, в следующий раз получится.`;
+          }
+
+          document.getElementById('rsvpForm').reset();
+          document.getElementById('foodOtherInput').style.display = 'none';
+          document.getElementById('drinksOtherInput').style.display = 'none';
+        } else {
+            throw new Error('Ошибка Telegram.');
+        }
+      } catch (error) {
+        status.style.display = 'block'; status.style.color = 'red';
+        status.textContent = 'Ошибка. Напишите Егору о том, что произошло.';
+      } finally {
+        btn.disabled = false; btn.textContent = 'Отправить ответы';
+      }
+    }
+  </script>
+</body>
+</html>
