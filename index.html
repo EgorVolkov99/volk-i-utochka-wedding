@@ -604,21 +604,11 @@
       const startScreen = document.getElementById('startScreen');
       startScreen.style.opacity = '0';
       setTimeout(() => startScreen.style.visibility = 'hidden', 800);
-
-      // Инициализируем и разблокируем КАЖДЫЙ аудиотег по очереди (проигрывание + пауза для мобильных)
+      
+      // Инициализируем и разблокируем КАЖДЫЙ аудиотег по очереди через .load()
       const allAudios = document.querySelectorAll('audio');
       allAudios.forEach(audio => {
-        audio.muted = true;
-        const p = audio.play();
-        if (p !== undefined) {
-          p.then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            audio.muted = false;
-          }).catch(() => {
-            audio.muted = false;
-          });
-        }
+        audio.load(); // Принудительно запускаем загрузку сетевого потока
       });
 
       // Разблокируем глобальный звук и запускаем первую зону
@@ -694,19 +684,21 @@
       // Останавливаем все остальные треки
       document.querySelectorAll('audio').forEach(audio => {
         if (audio.id !== newTrackId && !audio.paused) {
-          let steps = 10;
           let fadeOut = setInterval(() => {
-            steps--;
             try {
-              audio.volume = Math.max(0, steps / 10);
-            } catch (e) {}
-
-            if (steps <= 0) {
+              if (audio.volume > 0.1) {
+                audio.volume -= 0.1;
+              } else {
+                audio.volume = 0;
+                audio.pause();
+                clearInterval(fadeOut);
+              }
+            } catch (e) {
+              // Фоллбек для iOS (где volume не регулируется программно)
               audio.pause();
-              try { audio.volume = 1; } catch (e) {}
               clearInterval(fadeOut);
             }
-          }, 50);
+          }, 100);
           fadeIntervals.push(fadeOut);
         }
       });
@@ -717,18 +709,18 @@
       let playPromise = newTrack.play();
       if (playPromise !== undefined) {
         playPromise.then(() => {
-          let steps = 0;
           let fadeIn = setInterval(() => {
-            steps++;
             try {
-              newTrack.volume = Math.min(1, steps / 10);
-            } catch (e) {}
-
-            if (steps >= 10) {
-              try { newTrack.volume = 1; } catch (e) {}
-              clearInterval(fadeIn);
+              if (newTrack.volume < 0.9) {
+                newTrack.volume += 0.1;
+              } else {
+                newTrack.volume = 1;
+                clearInterval(fadeIn);
+              }
+            } catch (e) {
+              clearInterval(fadeIn); // На iOS просто играет на 100% громкости
             }
-          }, 50);
+          }, 100);
           fadeIntervals.push(fadeIn);
         }).catch(err => {
           console.log("Воспроизведение заблокировано браузером:", err);
