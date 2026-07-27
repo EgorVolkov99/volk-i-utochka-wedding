@@ -17,7 +17,7 @@
       --glass-border: rgba(255, 255, 255, 0.08);
       --text-color: #f5f5f7;
       --text-light: #a1a1a6;
-      --accent-gold: #d4af37;
+      --accent-gold: #c5a880;
       --accent-gradient: linear-gradient(135deg, #f5f5f7 0%, #d4af37 100%);
       --font-title: 'Cormorant Garamond', serif;
       --font-body: 'Montserrat', sans-serif;
@@ -82,6 +82,7 @@
     .h4 { width: 30vw; height: 30vw; top: 10%; left: 60%; animation-duration: 35s; opacity: 0.3; }
     .h5 { width: 10vw; height: 10vw; top: 40%; left: 10%; animation-duration: 20s; opacity: 0.6;  animation-delay: -7s; }
     .h6 { width: 20vw; height: 20vw; top: 60%; left: 30%; animation-duration: 15s; opacity: 0.3;  animation-delay: -22s; }
+
 
     @keyframes floatHeart {
       0% { transform: translate(0, 0) scale(1) rotate(0deg); }
@@ -299,7 +300,7 @@
     details[open] summary::after { transform: rotate(45deg); }
     .faq-content { margin-top: 15px; font-size: 0.95rem; color: var(--text-light); text-align: left; line-height: 1.6; }
 
-    .img-fluid { width: 100%; border-radius: 24px; margin-top: 20px; border: 1px solid var(--glass-border); }
+    .img-fluid { width: 50%; border-radius: 24px; margin-top: 0px; border: 1px solid var(--glass-border); }
   </style>
 </head>
 <body>
@@ -338,7 +339,7 @@
   <!-- ЗОНА 1: HERO -->
   <section class="hero-section" id="zone-hero">
     <div class="hero-image-wrapper">
-      <img src="./Фото/Мы_маленькие.png" alt="Мы" class="hero-image">
+      <img src="./Фото/Cover.jpg" alt="Мы" class="hero-image">
       <div class="hero-overlay"></div>
     </div>
     
@@ -355,16 +356,17 @@
   <!-- ВИДЕО СЕКЦИЯ -->
   <section class="app-container" id="videoSection">
     <div class="video-container" id="videoContainer" onclick="toggleVideo()">
-      <video id="storyVideo" playsinline preload="metadata">
-        <source src="./Фото/Мы.mp4" type="video/mp4">
+      <!-- ПРЯМАЯ ПОТОКОВАЯ ССЫЛКА НА GOOGLE ДИСК С ПОСТЕР-ЗАГЛУШКОЙ -->
+      <video id="storyVideo" playsinline preload="metadata" poster="./Фото/Video_poster.jpg">
+        <source src="https://github.com/EgorVolkov99/volk-i-utochka-wedding/releases/download/vid/Video_720.mp4" type="video/mp4">
       </video>
 
       <div class="play-icon" id="playIcon">▶</div>
 
       <!-- Оверлей после видео -->
-      <div class="video-end-overlay" id="videoEndOverlay">
-        <button class="btn-primary" onclick="replayVideo()" style="width: 80%; max-width: 350px;">Ой, а включите еще раз!<br><span style="font-size: 0.7rem; font-weight:300; letter-spacing: 0;">Мне понравилось</span></button>
-        <button class="btn-primary" onclick="continueScroll()" style="background: var(--accent-gold); color:#000; border:none; width: 80%; max-width: 350px;">А что же дальше?</button>
+      <div class="video-end-overlay" id="videoEndOverlay" onclick="event.stopPropagation()">
+        <button class="btn-primary" onclick="continueScroll(event)" style="background: var(--accent-gold); color:#000; border:none; width: 80%; max-width: 350px;">А что же дальше?</button>
+        <button class="btn-primary" onclick="replayVideo(event)" style="width: 80%; max-width: 350px;">Ой, а включите еще раз!<br><span style="font-size: 0.7rem; font-weight:300; letter-spacing: 0;">Мне понравилось</span></button>
       </div>
     </div>
   </section>
@@ -439,10 +441,10 @@
 
       <div class="slider-wrapper" id="sliderZags">
         <div class="slider-track" onscroll="updateSliderDots('sliderZags')">
-          <div class="slider-item" data-caption="Так дворец выглядит снаружи"><img src="./Фото/ЗАГС_1.jpg" alt="ЗАГС 1"></div>
-          <div class="slider-item" data-caption="Это его парадная лестница - тут фотографироваться обязательно"><img src="./Фото/ЗАГС_2.jpg" alt="ЗАГС 2"></div>
-          <div class="slider-item" data-caption="В этом зале нас распишут, а вы - похлопаете"><img src="./Фото/ЗАГС_3.jpg" alt="ЗАГС 3"></div>
-          <div class="slider-item" data-caption="В этом и других залах вы будете ожидать начала церемонии и общаться"><img src="./Фото/ЗАГС_4.jpg" alt="ЗАГС 4"></div>
+          <div class="slider-item" data-caption="Так дворец выглядит снаружи"><img src="./Фото/ZAGS_1.jpg" alt="ЗАГС 1"></div>
+          <div class="slider-item" data-caption="Это его парадная лестница - тут фотографироваться обязательно"><img src="./Фото/ZAGS_2.jpg" alt="ЗАГС 2"></div>
+          <div class="slider-item" data-caption="В этом зале нас распишут, а вы - похлопаете"><img src="./Фото/ZAGS_3.jpg" alt="ЗАГС 3"></div>
+          <div class="slider-item" data-caption="В этом и других залах вы будете ожидать начала церемонии и общаться"><img src="./Фото/ZAGS_4.jpg" alt="ЗАГС 4"></div>
         </div>
         <div class="slider-caption" id="caption-sliderZags">Так дворец выглядит снаружи!</div>
         <div class="slider-nav" id="nav-sliderZags">
@@ -464,10 +466,10 @@
 
       <div class="slider-wrapper" id="sliderCottage">
         <div class="slider-track" onscroll="updateSliderDots('sliderCottage')">
-          <div class="slider-item" data-caption="Такой домик приютит наш скромный праздник"><img src="./Фото/Коттедж_1.png" alt="Коттедж 1"></div>
+          <div class="slider-item" data-caption="Такой домик приютит наш скромный праздник"><img src="./Фото/house_1.jpg" alt="Коттедж 1"></div>
+          <div class="slider-item" data-caption="И будет такой бассейн"><img src="./Фото/house_2.jpg" alt="Коттедж 2"></div>
+          <div class="slider-item" data-caption="А в этой и многих других комнатах вы сможете переночевать"><img src="./Фото/house_3.jpg" alt="Коттедж 3"></div>
           <div class="slider-item" data-caption="Да, будет действительно зелено!"><iframe src="https://www.google.com/maps/embed?pb=!4v1784736537334!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJRDYwYVhzVmc.!2m2!1d60.11149486151693!2d30.29794771342747!3f280.2343177598503!4f-39.50323370443064!5f0.7324599092191462" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
-          <div class="slider-item" data-caption="И будет такой бассейн"><img src="./Фото/Коттедж_2.jpg" alt="Коттедж 2"></div>
-          <div class="slider-item" data-caption="А в этой и многих других комнатах вы сможете переночевать"><img src="./Фото/Коттедж_3.jpg" alt="Коттедж 3"></div>
         </div>
         <div class="slider-caption" id="caption-sliderCottage">Такой домик приютит наш скромный праздник</div>
         <div class="slider-nav" id="nav-sliderCottage"></div>
@@ -504,7 +506,7 @@
       <div class="faq-content">На нашем скромном мероприятии нет строгой цветовой палитры или конкретного стиля. Разве что только белое платье забронировано невестой) Вас лишь только настоятельно просим быть неотразимыми и торжественными! </div>
     </details>
     <details>
-      <summary>Можно ли остаться с ночевкой?</summary>
+      <summary>Можно ли остаться с ночёвкой?</summary>
       <div class="faq-content">Да, коттедж огромный! Места хватит на всех и Вам не стоит переживать о поздней дороге домой.</div>
     </details>
     <details>
@@ -513,7 +515,7 @@
     </details>
     <details>
       <summary>Можно ли принести свой фотоаппарат, свою настолку или что-то, что может быть полезным?</summary>
-      <div class="faq-content">Конечно! Все, что может сделать наш общий праздник лучше - категорически приветствуется</div>
+      <div class="faq-content">Конечно! Все, что может сделать наш общий праздник лучше — категорически приветствуется</div>
     </details>
     <details>
       <summary>Есть ли что-то нежелательное на мероприятии?</summary>
@@ -576,7 +578,7 @@
         <label class="form-label">Сможете ли вы помочь подвести кого-то до коттеджа?</label>
         <div class="checkbox-group">
           <label class="checkbox-label"><input type="radio" name="transfer" value="Есть машина, но не смогу"> Есть машина, но не смогу</label>
-          <label class="checkbox-label"><input type="radio" name="transfer" value="У меня есть машина - готов буду подвести кого-нибудь"> У меня есть машина - готов буду подвести кого-нибудь</label>
+          <label class="checkbox-label"><input type="radio" name="transfer" value="У меня есть машина - готов буду подвести кого-нибудь"> У меня есть машина — готов буду подвести кого-нибудь</label>
           <label class="checkbox-label"><input type="radio" name="transfer" value="Могу взять каршеринг и скооперироваться с кем-нибудь"> Могу взять каршеринг и скооперироваться с кем-нибудь</label>
           <label class="checkbox-label"><input type="radio" name="transfer" value="Доберусь как-нибудь один"> Доберусь как-нибудь один</label>
           <label class="checkbox-label"><input type="radio" name="transfer" value="Хотел бы, чтобы мне помогли доехать"> Хотел бы, чтобы мне помогли доехать</label>
@@ -603,26 +605,18 @@
       startScreen.style.opacity = '0';
       setTimeout(() => startScreen.style.visibility = 'hidden', 800);
       
-      // ВАЖНО: Разблокируем все аудио-треки для мобильных браузеров (iOS/Android)
-      // Без этого действия внутри клика браузер заблокирует воспроизведение при скролле!
-      document.querySelectorAll('audio').forEach(audio => {
-        audio.volume = 0;
-        let playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-          }).catch(error => {
-            console.log("Auto-unlock failed for:", audio.id);
-          });
-        }
+      // Инициализируем и разблокируем КАЖДЫЙ аудиотег по очереди через .load()
+      const allAudios = document.querySelectorAll('audio');
+      allAudios.forEach(audio => {
+        audio.load(); // Принудительно запускаем загрузку сетевого потока
       });
 
-      if (!globalAudioEnabled) {
-        setTimeout(() => {
-          toggleGlobalAudio();
-        }, 150);
-      }
+      // Разблокируем глобальный звук и запускаем первую зону
+      globalAudioEnabled = true;
+      const audioBtn = document.getElementById('audioToggle');
+      if (audioBtn) audioBtn.textContent = '🔊';
+
+      checkAudioZone();
     }
 
     /* --- УПРАВЛЕНИЕ ТЕМОЙ И АНИМАЦИЕЙ ФОНА --- */
@@ -650,11 +644,15 @@
     const locPlaylist = ['audio-loc-1', 'audio-loc-2', 'audio-loc-3'];
     let currentLocIndex = 0;
 
+    // Автопереключение локационных треков
     locPlaylist.forEach((id, index) => {
-      document.getElementById(id).addEventListener('ended', () => {
-        currentLocIndex = (index + 1) % locPlaylist.length;
-        crossfadeTo(locPlaylist[currentLocIndex]);
-      });
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('ended', () => {
+          currentLocIndex = (index + 1) % locPlaylist.length;
+          crossfadeTo(locPlaylist[currentLocIndex]);
+        });
+      }
     });
 
     function toggleGlobalAudio() {
@@ -674,40 +672,61 @@
 
     function crossfadeTo(newTrackId) {
       if (!globalAudioEnabled) return;
-      
+
       const newTrack = document.getElementById(newTrackId);
       if (!newTrack) return;
       if (currentAudioTrack && currentAudioTrack.id === newTrackId && !currentAudioTrack.paused) return;
 
+      // Очищаем предыдущие интервалы затухания
       fadeIntervals.forEach(clearInterval);
       fadeIntervals = [];
 
+      // Останавливаем все остальные треки
       document.querySelectorAll('audio').forEach(audio => {
         if (audio.id !== newTrackId && !audio.paused) {
           let fadeOut = setInterval(() => {
-            if (audio.volume > 0.1) {
-              audio.volume -= 0.1;
-            } else {
-              audio.volume = 0;
+            try {
+              if (audio.volume > 0.1) {
+                audio.volume -= 0.1;
+              } else {
+                audio.volume = 0;
+                audio.pause();
+                clearInterval(fadeOut);
+              }
+            } catch (e) {
+              // Фоллбек для iOS (где volume не регулируется программно)
               audio.pause();
               clearInterval(fadeOut);
             }
-          }, 100); 
+          }, 100);
           fadeIntervals.push(fadeOut);
         }
       });
 
-      newTrack.volume = 0;
-      newTrack.play().catch(e => console.log("Play prevented"));
-      let fadeIn = setInterval(() => {
-        if (newTrack.volume < 0.9) {
-          newTrack.volume += 0.1;
-        } else {
-          newTrack.volume = 1;
-          clearInterval(fadeIn);
-        }
-      }, 100);
-      fadeIntervals.push(fadeIn);
+      // Запускаем новый трек
+      try { newTrack.volume = 0; } catch(e) {}
+
+      let playPromise = newTrack.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          let fadeIn = setInterval(() => {
+            try {
+              if (newTrack.volume < 0.9) {
+                newTrack.volume += 0.1;
+              } else {
+                newTrack.volume = 1;
+                clearInterval(fadeIn);
+              }
+            } catch (e) {
+              clearInterval(fadeIn); // На iOS просто играет на 100% громкости
+            }
+          }, 100);
+          fadeIntervals.push(fadeIn);
+        }).catch(err => {
+          console.log("Воспроизведение заблокировано браузером:", err);
+        });
+      }
+
       currentAudioTrack = newTrack;
     }
 
@@ -782,21 +801,35 @@
       }
     }
 
-    storyVideo.onended = () => {
-      videoEndOverlay.classList.add('active');
-      // Включаем музыку обратно, если она играла до этого
-      if (isAudioPlaying) bgAudio.play();
-    };
+    function replayVideo(event) {
+      if (event) event.stopPropagation();
+      videoEndOverlay.classList.remove('active');
+      storyVideo.currentTime = 0;
 
-    function continueScroll() {
-      toggleVideo()
+      let playPromise = storyVideo.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          videoContainer.classList.add('playing');
+        }).catch(e => console.log(e));
+      }
+
+      if (currentAudioTrack) currentAudioTrack.pause();
+    }
+
+    function continueScroll(event) {
+      if (event) event.stopPropagation();
+      storyVideo.pause();
+      videoContainer.classList.remove('playing');
+      videoEndOverlay.classList.remove('active');
+      checkAudioZone();
       document.getElementById('zone-schedule').scrollIntoView({ behavior: 'smooth' });
     }
 
-    storyVideo.addEventListener('ended', () => {
+    storyVideo.onended = () => {
+      videoEndOverlay.classList.add('active');
       videoContainer.classList.remove('playing');
-      checkAudioZone(); 
-    });
+      checkAudioZone();
+    };
 
     /* --- КНОПКА НАВЕРХ --- */
     const scrollTopBtn = document.getElementById('scrollTopBtn');
