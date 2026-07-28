@@ -818,10 +818,37 @@
 
     function continueScroll(event) {
       if (event) event.stopPropagation();
+
+      // 1. Останавливаем видео
       storyVideo.pause();
       videoContainer.classList.remove('playing');
       videoEndOverlay.classList.remove('active');
-      checkAudioZone();
+
+      // 2. Устанавливаем текущую зону на расписание
+      currentZoneId = 'zone-schedule';
+
+      // 3. ПРИНУДИТЕЛЬНО включаем музыку расписания внутри клика пользователя
+      if (globalAudioEnabled) {
+        crossfadeTo('audio-schedule');
+      }
+
+      // 4. КОСТЫЛЬ ДЛЯ ЛОКАЦИЙ: Прогреваем треки локаций, пока браузер верит клику
+      ['audio-loc-1', 'audio-loc-2', 'audio-loc-3', 'audio-rsvp'].forEach(id => {
+        const a = document.getElementById(id);
+        if (a) {
+          a.muted = true;
+          let p = a.play();
+          if (p !== undefined) {
+            p.then(() => {
+              a.pause();
+              a.currentTime = 0;
+              a.muted = false;
+            }).catch(() => { a.muted = false; });
+          }
+        }
+      });
+
+      // 5. Плавный скролл к расписанию
       document.getElementById('zone-schedule').scrollIntoView({ behavior: 'smooth' });
     }
 
