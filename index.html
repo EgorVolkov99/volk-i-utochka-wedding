@@ -604,18 +604,14 @@
       const startScreen = document.getElementById('startScreen');
       startScreen.style.opacity = '0';
       setTimeout(() => startScreen.style.visibility = 'hidden', 800);
-
-      // КОСТЫЛЬ ДЛЯ МОБИЛЬНЫХ: Прогреваем и «будим» каждый аудиотег прямо в момент тапа
+      
+      // Инициализируем и разблокируем КАЖДЫЙ аудиотег по очереди через .load()
       const allAudios = document.querySelectorAll('audio');
       allAudios.forEach(audio => {
-        audio.muted = true;
-        audio.play().then(() => {
-          audio.pause();
-          audio.currentTime = 0;
-          audio.muted = false;
-        }).catch(err => console.log("Warmup blocked:", err));
+        audio.load(); // Принудительно запускаем загрузку сетевого потока
       });
 
+      // Разблокируем глобальный звук и запускаем первую зону
       globalAudioEnabled = true;
       const audioBtn = document.getElementById('audioToggle');
       if (audioBtn) audioBtn.textContent = '🔊';
@@ -781,9 +777,6 @@
     function scrollToVideoAndPlay() {
       if (!globalAudioEnabled) {
         toggleGlobalAudio();
-      } else {
-        // Принудительно дергаем play текущего трека зоны, чтобы мобильный сафари не спал
-        checkAudioZone();
       }
       
       const vSection = document.getElementById('videoSection');
